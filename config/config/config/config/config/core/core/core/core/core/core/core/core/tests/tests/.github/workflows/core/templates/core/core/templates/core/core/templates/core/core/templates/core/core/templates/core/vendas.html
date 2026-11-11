@@ -1,0 +1,243 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Vendas | Comércio Fácil{% endblock %}
+
+{% block content %}
+
+{% if nova_venda %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-7">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body p-4">
+
+                <h2 class="fw-bold mb-2">Registrar venda</h2>
+
+                <p class="text-muted mb-4">
+
+                    Informe os dados da venda.
+
+                </p>
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+
+                            Produto
+
+                        </label>
+
+                        <select name="produto" class="form-select" required>
+
+                            <option value="">Selecione um produto</option>
+
+                            {% for produto in produtos_disponiveis %}
+
+                                <option value="{{ produto.id }}">
+
+                                    {{ produto.nome }} -
+
+                                    R$ {{ produto.preco|floatformat:2 }} -
+
+                                    Estoque: {{ produto.quantidade }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+
+                            Quantidade
+
+                        </label>
+
+                        <input
+
+                            type="number"
+
+                            name="quantidade"
+
+                            class="form-control"
+
+                            min="1"
+
+                            value="1"
+
+                            required
+
+                        >
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+
+                            Forma de pagamento
+
+                        </label>
+
+                        {{ form.forma_pagamento }}
+
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+
+                        <button type="submit" class="btn btn-success">
+
+                            Finalizar venda
+
+                        </button>
+
+                        <a href="{% url 'vendas' %}"
+
+                           class="btn btn-secondary">
+
+                            Cancelar
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% else %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2 class="fw-bold">Vendas</h2>
+
+        <p class="text-muted">Consulte as vendas registradas.</p>
+
+    </div>
+
+    <a href="{% url 'venda_nova' %}" class="btn btn-success">
+
+        + Nova venda
+
+    </a>
+
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Número</th>
+
+                        <th>Data</th>
+
+                        <th>Produtos</th>
+
+                        <th>Pagamento</th>
+
+                        <th>Valor total</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for venda in vendas %}
+
+                    <tr>
+
+                        <td>#{{ venda.id }}</td>
+
+                        <td>
+
+                            {{ venda.data|date:"d/m/Y H:i" }}
+
+                        </td>
+
+                        <td>
+
+                            {% for item in venda.itens.all %}
+
+                                {{ item.produto.nome }}
+
+                                ({{ item.quantidade }})
+
+                                {% if not forloop.last %}, {% endif %}
+
+                            {% empty %}
+
+                                Sem itens
+
+                            {% endfor %}
+
+                        </td>
+
+                        <td>
+
+                            {{ venda.get_forma_pagamento_display }}
+
+                        </td>
+
+                        <td>
+
+                            R$ {{ venda.valor_total|floatformat:2 }}
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="5" class="text-center text-muted py-4">
+
+                            Nenhuma venda registrada.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}
