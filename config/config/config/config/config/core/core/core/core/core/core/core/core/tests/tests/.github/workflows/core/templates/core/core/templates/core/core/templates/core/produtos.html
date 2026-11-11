@@ -1,0 +1,191 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Produtos | Comércio Fácil{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2 class="fw-bold">Produtos</h2>
+
+        <p class="text-muted">Consulte e gerencie seus produtos.</p>
+
+    </div>
+
+    <a href="{% url 'produto_novo' %}" class="btn btn-primary">
+
+        + Novo produto
+
+    </a>
+
+</div>
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <form method="get" class="row g-2">
+
+            <div class="col-md-10">
+
+                <input
+
+                    type="text"
+
+                    name="busca"
+
+                    class="form-control"
+
+                    placeholder="Pesquisar produto pelo nome..."
+
+                    value="{{ busca }}"
+
+                >
+
+            </div>
+
+            <div class="col-md-2">
+
+                <button type="submit" class="btn btn-primary w-100">
+
+                    Pesquisar
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Produto</th>
+
+                        <th>Categoria</th>
+
+                        <th>Preço</th>
+
+                        <th>Estoque</th>
+
+                        <th>Situação</th>
+
+                        <th>Ações</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for produto in produtos %}
+
+                    <tr>
+
+                        <td>{{ produto.nome }}</td>
+
+                        <td>{{ produto.categoria }}</td>
+
+                        <td>
+
+                            R$ {{ produto.preco|floatformat:2 }}
+
+                        </td>
+
+                        <td>{{ produto.quantidade }}</td>
+
+                        <td>
+
+                            {% if produto.estoque_baixo %}
+
+                                <span class="badge bg-danger">
+
+                                    Estoque baixo
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-success">
+
+                                    Normal
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <div class="d-flex gap-2">
+
+                                <a
+
+                                    href="{% url 'produto_editar' produto.id %}"
+
+                                    class="btn btn-sm btn-outline-primary"
+
+                                >
+
+                                    Editar
+
+                                </a>
+
+                                <a
+
+                                    href="{% url 'produto_excluir' produto.id %}"
+
+                                    class="btn btn-sm btn-outline-danger"
+
+                                >
+
+                                    Excluir
+
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="6" class="text-center text-muted py-4">
+
+                            Nenhum produto cadastrado.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
